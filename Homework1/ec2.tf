@@ -2,55 +2,33 @@ variable "aws_access_key" {}
 variable "aws_secret_key" {}
 variable "private_key_path" {}
 variable "key_name" {}
+variable "region" {
+    default = "us-east-2"
+}
 
+data "aws_ami" "ubuntu-18_04" {
+    most_recent = true
+    owners = ["099720109477"]
 
+    filter {
+        name   = "name"
+        values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-20200908"]
+    }
+    filter {
+        name   = "architecture"
+        values = ["x86_64"]
+    }
 
-# data "aws_ami" "aws_linux_2" {
-#     most_recent      = true
-#     owners = ["amazon"]
-# }
-
-
-resource "aws_default_vpc" "default" { 
 
 }
 
-##### there shoudnt be rescource per rule?
 
-resource "aws_security_group" "allow_ngix" {
-    name = "nginx_demo"
-    description = "Allow prot 80 and 22"
-    # vpc_id = aws_default_vpc.default.index
-
-    ingress {
-        from_port = 22
-        to_port = 22 
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-
-    ingress {
-        from_port = 80
-        to_port = 80 
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-
-    egress {
-        from_port = 0
-        to_port = 0 
-        protocol = -1
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-}
-
-
-### what is the .id that we are using? 
 resource "aws_instance" "test" {
     count = 2
-    ami = "ami-0528a5175983e7f28"
-    instance_type = "t2.medium"
-    key_name = var.key_name
+    ami = data.aws_ami.ubuntu-18_04.id
+    # ami ="ami-0e82959d4ed12de3f"
+    instance_type = "t2.micro"
+    # key_name = var.key_name
     vpc_security_group_ids = [aws_security_group.allow_ngix.id]
     
     ebs_block_device {
