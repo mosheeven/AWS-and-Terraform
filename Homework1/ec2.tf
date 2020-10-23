@@ -12,9 +12,8 @@ data "aws_ami" "ubuntu-18_04" {
     }
 }
 
-
 resource "aws_instance" "test" {
-    count = var.count
+    count = var.ec2_count
     ami = data.aws_ami.ubuntu-18_04.id
     # ami ="ami-0e82959d4ed12de3f"
     instance_type = "t2.micro"
