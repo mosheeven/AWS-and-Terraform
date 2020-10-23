@@ -1,11 +1,3 @@
-variable "aws_access_key" {}
-variable "aws_secret_key" {}
-variable "private_key_path" {}
-variable "key_name" {}
-variable "region" {
-    default = "us-east-2"
-}
-
 data "aws_ami" "ubuntu-18_04" {
     most_recent = true
     owners = ["099720109477"]
@@ -22,11 +14,11 @@ data "aws_ami" "ubuntu-18_04" {
 
 
 resource "aws_instance" "test" {
-    count = 2
+    count = var.count
     ami = data.aws_ami.ubuntu-18_04.id
     # ami ="ami-0e82959d4ed12de3f"
     instance_type = "t2.micro"
-    # key_name = var.key_name
+    key_name = var.key_name
     vpc_security_group_ids = [aws_security_group.allow_ngix.id]
     
     ebs_block_device {
@@ -65,9 +57,5 @@ resource "aws_instance" "test" {
 
 
 output "aws_instance_public_dns_1" {
-    value = aws_instance.test[0].public_dns
-}
-
-output "aws_instance_public_dns_2" {
-    value = aws_instance.test[1].public_dns
+    value = aws_instance.test.*.public_dns
 }
