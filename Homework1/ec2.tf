@@ -18,8 +18,6 @@ data "aws_ami" "ubuntu-18_04" {
         name   = "architecture"
         values = ["x86_64"]
     }
-
-
 }
 
 
