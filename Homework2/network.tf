@@ -17,15 +17,15 @@ resource "aws_internet_gateway" "igw" {
 }
 
 # EIP
-# resource "aws_eip" "ip_nat"{
-#     vpc = "true"
-# }
+resource "aws_eip" "ip_nat"{
+    vpc = "true"
+}
 
 # NAT
-# resource "aws_nat_gateway" "gw" {
-#   allocation_id = aws_eip.ip_nat.id
-#   subnet_id     = aws_subnet.private_moshe.id
-# }
+resource "aws_nat_gateway" "gw" {
+  allocation_id = aws_eip.ip_nat.id
+  subnet_id     = aws_subnet.public_moshe.id
+}
 
 # public subnet
 resource "aws_subnet" "public_moshe" {
@@ -62,17 +62,17 @@ resource "aws_route_table" "r_public" {
 }
 
 # route table private
-# resource "aws_route_table" "r_private" {
-#     vpc_id = aws_vpc.main.id
-#     route {
-#         cidr_block = "0.0.0.0/0"
-#         nat_gateway_id = aws_nat_gateway.gw.id
-#     }
+resource "aws_route_table" "r_private" {
+    vpc_id = aws_vpc.main.id
+    route {
+        cidr_block = "0.0.0.0/0"
+        nat_gateway_id = aws_nat_gateway.gw.id
+    }
 
-#     tags = {
-#         Name = "route_to_nat"
-#     }
-# }
+    tags = {
+        Name = "route_to_nat"
+    }
+}
 
 # route table assosiation
 resource "aws_route_table_association" "public" {
@@ -81,8 +81,8 @@ resource "aws_route_table_association" "public" {
 }
 
 # route table assosiation
-# resource "aws_route_table_association" "private" {
-#   subnet_id      = aws_subnet.private_moshe.id
-#   route_table_id = aws_route_table.r_private.id
-# }
+resource "aws_route_table_association" "private" {
+  subnet_id      = aws_subnet.private_moshe.id
+  route_table_id = aws_route_table.r_private.id
+}
 
