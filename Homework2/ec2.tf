@@ -20,7 +20,7 @@ resource "aws_instance" "web_server" {
     instance_type = "t2.micro"
     key_name = var.key_name
     vpc_security_group_ids = [aws_security_group.allow_ngix.id]
-    subnet_id = aws_subnet.public_moshe.id
+    subnet_id = aws_subnet.public_moshe[count.index].id
     associate_public_ip_address = "true"
 
     tags = {
@@ -38,7 +38,7 @@ resource "aws_instance" "DB_server" {
     instance_type = "t2.micro"
     key_name = var.key_name
     vpc_security_group_ids = [aws_security_group.allow_ngix.id]
-    subnet_id = aws_subnet.private_moshe.id
+    subnet_id = aws_subnet.private_moshe[count.index].id
     associate_public_ip_address = "true"
 
     tags = {

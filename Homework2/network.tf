@@ -1,4 +1,4 @@
-data "aws_availability_zones" "available"{}
+# data "aws_availability_zones" "available"{}
 
 # vpc
 resource "aws_vpc" "main" {
@@ -24,14 +24,17 @@ resource "aws_eip" "ip_nat"{
 # NAT
 resource "aws_nat_gateway" "gw" {
   allocation_id = aws_eip.ip_nat.id
-  subnet_id     = aws_subnet.public_moshe.id
+  subnet_id     = aws_subnet.public_moshe[0].id
 }
+
 
 # public subnet
 resource "aws_subnet" "public_moshe" {
+    count = 2
     vpc_id = aws_vpc.main.id
-    cidr_block = var.public_subnet_vpc
-    availability_zone = data.aws_availability_zones.available.names[0]
+    cidr_block = var.public_subnet_vpc[count.index]
+    # availability_zone = data.aws_availability_zones.available.names[0]
+    availability_zone = var.AZ[count.index]
     tags = {
         Name = "public_subnet"
     }
@@ -39,9 +42,11 @@ resource "aws_subnet" "public_moshe" {
 
 # private subnet
 resource "aws_subnet" "private_moshe" {
+    count = 2
     vpc_id = aws_vpc.main.id
-    cidr_block = var.private_subnet_vpc
-    availability_zone = data.aws_availability_zones.available.names[1]
+    cidr_block = var.private_subnet_vpc[count.index]
+    # availability_zone = data.aws_availability_zones.available.names[1]
+    availability_zone = var.AZ[count.index]
     tags = {
         Name = "private_subnet"
     }
@@ -76,13 +81,15 @@ resource "aws_route_table" "r_private" {
 
 # route table assosiation
 resource "aws_route_table_association" "public" {
-  subnet_id      = aws_subnet.public_moshe.id
+  count = 2
+  subnet_id      = aws_subnet.public_moshe[count.index].id
   route_table_id = aws_route_table.r_public.id
 }
 
 # route table assosiation
 resource "aws_route_table_association" "private" {
-  subnet_id      = aws_subnet.private_moshe.id
+  count = 2
+  subnet_id      = aws_subnet.private_moshe[count.index].id
   route_table_id = aws_route_table.r_private.id
 }
 

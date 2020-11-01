@@ -3,7 +3,7 @@ resource "aws_lb" "public_lb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.lb_sg.id]
-  subnets            = [aws_subnet.public_moshe.id, aws_subnet.private_moshe.id]
+  subnets            = [aws_subnet.public_moshe[0].id,aws_subnet.public_moshe[1].id]
   tags = {
     Environment = "test"
   }
