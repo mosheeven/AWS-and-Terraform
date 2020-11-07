@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-west-2"
+  region = "us-east-2"
 }
 
 resource "aws_s3_bucket" "terraform_state" {
@@ -11,7 +11,7 @@ resource "aws_s3_bucket" "terraform_state" {
 
 terraform {
   backend "s3" {
-    bucket         = "tf-moshe-state"
+    bucket         = "tf-us-east-2-state"
     key            = "global/s3/terraform.tfstate"
     region         = "us-west-2"
     encrypt        = true
