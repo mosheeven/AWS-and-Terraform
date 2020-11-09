@@ -4,7 +4,7 @@ data "aws_ami" "ubuntu-18_04_with_nginx" {
 
     filter {
         name   = "name"
-        values = ["nginx"]
+        values = ["new_nginx"]
     }
     filter {
         name   = "architecture"
@@ -22,7 +22,8 @@ resource "aws_instance" "web_server" {
     vpc_security_group_ids = [aws_security_group.allow_ngix.id]
     subnet_id = module.network.public_subnet_vpc_ids[count.index]
     associate_public_ip_address = "true"
-
+    iam_instance_profile = "access_s3"
+    user_data = file("./user_data.sh")
     tags = {
         Name = "nginx server"
         Owner = "Moshe"
