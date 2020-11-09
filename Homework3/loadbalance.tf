@@ -8,6 +8,12 @@ resource "aws_lb" "public_lb" {
   tags = {
     Environment = "test"
   }
+  
+  access_logs {
+    bucket  = "tf-us-east-2-state"
+    prefix  = "logs-lb"
+    enabled = false
+  }
 }
 
 resource "aws_lb_listener" "web_machines" {
@@ -27,6 +33,10 @@ resource "aws_lb_target_group" "tg_web" {
   protocol = "HTTP"
   vpc_id   = module.network.vpc_vpc_id
   target_type = "ip"
+  stickiness {
+    type = "lb_cookie"
+    cookie_duration = 60
+  }
 }
 
 resource "aws_lb_target_group_attachment" "test" {
